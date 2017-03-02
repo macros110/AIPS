@@ -1,3 +1,9 @@
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.PreparedStatement"%>
+<%@page import="java.sql.Connection"%>
+<%@page import="javax.sql.DataSource"%>
+<%@page import="javax.naming.InitialContext"%>
+<%@page import="javax.naming.Context"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="java.util.Locale"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -21,6 +27,21 @@
 	}else{
 		
 	}
+	
+	Class.forName("com.mysql.jdbc.Driver");
+	Context initCtx = new InitialContext();
+	Context envCtx = (Context)initCtx.lookup("java:comp/env");
+	DataSource ds = (DataSource)envCtx.lookup("jdbc/ConnectionPool");
+	Connection conn = ds.getConnection();
+	String sql = "select account from tb_user";
+	PreparedStatement ps = conn.prepareStatement(sql);
+	ResultSet rs = ps.executeQuery();
+	String account = "";
+	while(rs.next()){
+		account = rs.getString(1);
+	}
+			
+	
 %>
 <%! //注意这里是 %!
 	public void jspInit(){
@@ -47,6 +68,7 @@
 		<table>
 			<tr>
 				<td><%= greeting %></td>
+				<td><%= account %></td>
 			</tr>
 		</table>
 	</body>
